@@ -19,7 +19,13 @@
     "@angular/platform-browser": "~11.2.0",
     "@angular/platform-browser-dynamic": "~11.2.0",
     "@angular/router": "~11.2.0",
+    "@ionic-native/android-permissions": "^5.32.1",
+    "@ionic-native/ble": "^5.32.1",
+    "@ionic-native/bluetooth-le": "^5.32.1",
+    "@ionic-native/bluetooth-serial": "^5.32.1",
+    "@ionic-native/core": "^5.32.1",
     "@ionic/angular": "^5.5.2",
+    "cordova-android": "9.1.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
@@ -40,6 +46,16 @@
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "4.16.1",
     "@typescript-eslint/parser": "4.16.1",
+    "cordova-plugin-android-permissions": "^1.1.2",
+    "cordova-plugin-ble-central": "^1.3.1",
+    "cordova-plugin-bluetooth-serial": "^0.4.7",
+    "cordova-plugin-bluetoothle": "^6.3.1",
+    "cordova-plugin-device": "^2.0.2",
+    "cordova-plugin-ionic-keyboard": "^2.2.0",
+    "cordova-plugin-ionic-webview": "^4.2.1",
+    "cordova-plugin-splashscreen": "^5.0.2",
+    "cordova-plugin-statusbar": "^2.4.2",
+    "cordova-plugin-whitelist": "^1.3.3",
     "eslint": "^7.6.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jsdoc": "30.7.6",
@@ -54,7 +70,27 @@
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
-    "typescript": "~4.0.2"
+    "typescript": "~4.0.2",
+    "xxxxx": "^1.0.3"
   },
-  "description": "An Ionic project"
+  "description": "An Ionic project",
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-ble-central": {},
+      "cordova-plugin-android-permissions": {},
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-device": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-bluetooth-serial": {},
+      "cordova-plugin-bluetoothle": {}
+    },
+    "platforms": [
+      "android"
+    ]
+  }
 }

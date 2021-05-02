@@ -6,6 +6,9 @@ import { HomePage } from './home.page';
 
 import { HomePageRoutingModule } from './home-routing.module';
 
+import { BluetoothLE } from '@ionic-native/bluetooth-le/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+
 
 @NgModule({
   imports: [
@@ -14,6 +17,7 @@ import { HomePageRoutingModule } from './home-routing.module';
     IonicModule,
     HomePageRoutingModule
   ],
+  providers:[BluetoothLE ,AndroidPermissions],
   declarations: [HomePage]
 })
 export class HomePageModule {}
