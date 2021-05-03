@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { AlertController, LoadingController, PopoverController } from '@ionic/angular';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { BluetoothLE } from '@ionic-native/bluetooth-le/ngx';
-import { ScanPopoverComponent } from 'src/app/components/scan-popover/scan-popover.component';
-
+import { ScanPopoverComponent } from 'src/app/components/scan-devices/scan-devices.component';
 
 
 
@@ -29,16 +28,7 @@ export class HomePage {
   }
 
   
-  //list of discovered devices
-  /*device = {
-    name: 'Alvaro',
-    address: 'AlvarezMorales'
-  }*/
-  devicesList  = [];
-
-
-  //loading type
-  loading: HTMLIonLoadingElement;
+ 
 
   constructor(private alertCtrl: AlertController,
               private bluetoothLE: BluetoothLE,
@@ -112,112 +102,19 @@ export class HomePage {
   async scanDevices_bluetoothLE() {
     
     //definitions
-    let rdyToScan = false;
-
-    //reset list of devices
-    this.devicesList = [];
-    
-    //scan parameters
-    let params = {
-      "services": [],
-      "allowDuplicates": true,
-      "scanMode": this.bluetoothLE.SCAN_MODE_LOW_POWER, 
-      "matchMode": this.bluetoothLE.MATCH_MODE_AGGRESSIVE, 
-      "matchNum": this.bluetoothLE.MATCH_NUM_ONE_ADVERTISEMENT, 
-      "calbackType": this.bluetoothLE.CALLBACK_TYPE_FIRST_MATCH
-    }
+    //let rdyToScan = false;    
 
     //check permission and location services
-    rdyToScan = await this.readyToScan();
+    let rdyToScan = await this.readyToScan();
 
     //scan for devices
-    if (!this.bleStatus.scanning && rdyToScan) {
-      //show the loading pop up
-      this.presentLoading('Searching for devices');
-      //scan devices method
-      this.bluetoothLE.startScan(params).subscribe( startScanSuccess => {
-        if ( startScanSuccess.status === 'scanStarted') { //scan started
-          console.log('Scanning for new devices...');
-          this.bleStatus.scanning = true;
-        } else if ( startScanSuccess.status === 'scanResult') { //device found
-          console.log('Device found:', startScanSuccess)
-          this.saveDevice(startScanSuccess.name, startScanSuccess.address, startScanSuccess.advertisement);
-        }
-      }, startScanError => {
-        console.log('Error when scanning for new devices', startScanError);
-      });
-
-      //scan timeout
-      setTimeout(() => {
-        console.log('Time expired');
-        this.stopScan_bluetoohLE();
-      }, 60000);
+    if (rdyToScan) {
+      this.presentPopover();
 
     } else {
-      console.log('Not ready to scan or already scanning for devices...');
+      console.log('Not ready to scan');
     }
-
     
-  }
-
-
-  //save new device
-  saveDevice(name: string, address: string, advertisement) {   
-    
-    //discovered device
-    let discoveredDevice = {
-      name,
-      address,
-      advertisement
-    }
-
-    //check if device is in the list
-    function inList (item) {
-      if (item.address === discoveredDevice.address) {
-        return true;
-      } else {
-        return false;
-      }     
-    }
-    let oldDevice = this.devicesList.some(inList);
-
-    //save device in the list if it is not there
-    if (!oldDevice) {
-      if (!discoveredDevice.name) {
-        discoveredDevice.name = ' - '
-      }
-      this.devicesList.push(discoveredDevice);
-      console.log('It is new device');
-      //console.log('List of devices', this.devicesList);
-    } else {
-      console.log ('It is already in the list');      
-    }
-
-  }
-
-  //Stop scan devices
-  stopScan_bluetoohLE() {
-    
-    //stop loading pop up
-    this.loading.dismiss();
-    
-    //stop scan devices method
-    this.bluetoothLE.isScanning().then( resp => {
-      if (resp.isScanning) {
-        this.bluetoothLE.stopScan().then( stopScanSuccess => {
-          console.log('Scan for new devices stopped', stopScanSuccess);
-          this.bleStatus.scanning = false;
-          console.log('List of devices', this.devicesList);
-          this.presentPopover();
-          //console.log(this.bluetoothLE.encodedStringToBytes(this.devicesList[0].advertisement));
-          //console.log(this.bluetoothLE.bytesToString(this.bluetoothLE.encodedStringToBytes(this.devicesList[0].advertisement)));
-        }, stopScanError => {
-          console.log('Error when stop scan for new devices', stopScanError);
-        });
-      } else {
-        console.log('Scan for new devices is already stopped');
-      }
-    });
   }
 
 
@@ -313,18 +210,14 @@ export class HomePage {
     await alert.present();
   }
 
-  //Show loading message with loading icon
-  async presentLoading(message: string) {
-    this.loading = await this.loadingCtrl.create({
-      message,
-    });
-    await this.loading.present();
-  }
+
 
   //Show popover of scan devices
   async presentPopover() {
     const popover = await this.popoverCtrl.create({
       component: ScanPopoverComponent,
+      backdropDismiss: false,
+      cssClass: 'scan',
       translucent: true
     });
     await popover.present();

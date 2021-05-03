@@ -1,0 +1,31 @@
+<ion-content expand="block">
+
+  <ion-list>
+   
+    <ion-item *ngIf="!isScanning">    
+      <ion-label>
+        Found devices:
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button (click)="closeNoArguments()">
+          <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>    
+    </ion-item>
+
+    <ion-item *ngIf="isScanning">
+      <ion-label>
+        Scanning for devices
+      </ion-label>
+      <ion-spinner slot="end" name="circles"></ion-spinner>
+    </ion-item>
+    
+    <ion-item *ngFor="let device of devicesList"
+              (click)="connectDevice(device)">
+      <ion-label>{{device.name}}</ion-label>
+      <ion-label>{{device.address}}</ion-label>
+    </ion-item>
+
+  </ion-list>
+
+</ion-content>
