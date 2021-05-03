@@ -27,6 +27,8 @@ export class HomePage {
     conn_device_name: ''
   }
 
+  //Paired devices
+  pairedDevices = [];
   
  
 
@@ -50,10 +52,15 @@ export class HomePage {
 
     //initialize and enable
     if (!this.bleStatus.initialized) {
-      this.initilaize_bluetoothLE(true, true);
+      await this.initilaize_bluetoothLE(true, true);
     } else if (!this.bleStatus.enabled) {
       this.bluetoothLE.enable();
       this.bleStatus.enabled = true;      
+    }
+
+    //get list of paired devices
+    if (this.bleStatus.initialized) {
+      this.getPairedDevices();
     }
 
   }
@@ -98,8 +105,27 @@ export class HomePage {
   }
 
 
+  //get paired devices list
+  getPairedDevices() {
+
+    //definitions
+    let params = {
+      "services": []
+    }
+
+    //get paired list
+    this.bluetoothLE.retrieveConnected(params).then( retrieveConnSucces => {
+      console.log('Paired devices', retrieveConnSucces);
+      this.pairedDevices = retrieveConnSucces.devices;
+    }).catch( retrieveConnError => {
+      console.log('Error when searching for paired devices ', retrieveConnError);
+    });
+
+  }
+
+
   //Scan devices bluetoothLE
-  async scanDevices_bluetoothLE() {
+  async scanDevices_bluetoothLE(event: any) {
     
     //definitions
     //let rdyToScan = false;    
@@ -109,7 +135,7 @@ export class HomePage {
 
     //scan for devices
     if (rdyToScan) {
-      this.presentPopover();
+      this.presentPopover(event);
 
     } else {
       console.log('Not ready to scan');
@@ -213,17 +239,22 @@ export class HomePage {
 
 
   //Show popover of scan devices
-  async presentPopover() {
+  async presentPopover(event: any) {
     const popover = await this.popoverCtrl.create({
       component: ScanPopoverComponent,
       backdropDismiss: false,
       cssClass: 'scan',
+      //event: event,
       translucent: true
     });
     await popover.present();
 
-    const { role } = await popover.onDidDismiss();
-    console.log('onDidDismiss resolved with role', role);
+    const { data } = await popover.onWillDismiss();
+    console.log('Returned data on dismiss', data);
+    if (data != undefined) {
+      this.bleStatus.conn_device_name = data.name;
+      this.bleStatus.conn_device_address = data.address;
+    }
   }
   
 }

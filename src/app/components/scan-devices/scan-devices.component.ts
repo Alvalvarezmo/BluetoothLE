@@ -37,7 +37,6 @@ export class ScanPopoverComponent implements OnInit {
     await this.getScanStatus();
     if (this.newScan && !this.isScanning){
       this.scanDevices(60000);
-      console.log('Scanning for new devices');
     } else {
       console.log('Already scanning or error');
     }
@@ -64,7 +63,7 @@ export class ScanPopoverComponent implements OnInit {
     
     //scan parameters
     let params = {
-      "services": [],
+      "services": ["FFF0", "FFF1"],
       "allowDuplicates": true,
       "scanMode": this.bluetoothLE.SCAN_MODE_LOW_POWER, 
       "matchMode": this.bluetoothLE.MATCH_MODE_AGGRESSIVE, 
@@ -137,6 +136,7 @@ export class ScanPopoverComponent implements OnInit {
         this.bluetoothLE.stopScan().then( stopScanSuccess => {
           console.log('Scan for new devices stopped', stopScanSuccess);
           this.isScanning = false;
+          this.changeRef.detectChanges(); //refresh screen
           console.log('List of devices', this.devicesList);
           //console.log(this.bluetoothLE.encodedStringToBytes(this.devicesList[0].advertisement));
           //console.log(this.bluetoothLE.bytesToString(this.bluetoothLE.encodedStringToBytes(this.devicesList[0].advertisement)));
@@ -234,8 +234,9 @@ export class ScanPopoverComponent implements OnInit {
           if ( connectStatus === 'connected') {
             console.log('Devcie succesfully connected')
             deviceConnected = true;
+            this.closeWithArguments(device);
           } else if ( connectStatus === 'disconnected') {
-            console.log('Not able to connect with the device')
+            console.log('Device disconected');
             deviceConnected = false;
           }
         }, connectError => {
@@ -248,14 +249,15 @@ export class ScanPopoverComponent implements OnInit {
           console.log('Connect status', reconnectSuccess);
           this.loading.dismiss();
           if ( connectStatus === 'connected') {
-            console.log('Devcie succesfully connected')
+            console.log('Devcie succesfully reconnected')
             deviceConnected = true;
+            this.closeWithArguments(device);
           } else if ( connectStatus === 'disconnected') {
-            console.log('Not able to connect with the device')
+            console.log('Device disconected');
             deviceConnected = false;
           }
         }, reconnectError => {
-          console.log('Error when attempt to connect', reconnectError);
+          console.log('Error when attempt to reconnect', reconnectError);
           this.loading.dismiss();
         });
       }
@@ -275,9 +277,9 @@ export class ScanPopoverComponent implements OnInit {
 
 
   //Close popover with arguments
-  closeWithArguments( device ) {
-    console.log('Chosen device', device);
-    this.popoverCtrl.dismiss(device);
+  closeWithArguments( data ) {
+    console.log('Chosen device', data);
+    this.popoverCtrl.dismiss(data);
   }
 
 

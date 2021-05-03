@@ -20,8 +20,7 @@
       <ion-spinner slot="end" name="circles"></ion-spinner>
     </ion-item>
     
-    <ion-item *ngFor="let device of devicesList"
-              (click)="connectDevice(device)">
+    <ion-item *ngFor="let device of devicesList" (click)="connectDevice(device)" (click)="stopScan_bluetoohLE()">
       <ion-label>{{device.name}}</ion-label>
       <ion-label>{{device.address}}</ion-label>
     </ion-item>
